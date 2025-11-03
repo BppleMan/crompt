@@ -1,21 +1,39 @@
 name = "example"
+description = "一个用于演示自动生成 Shell CLI 模板的配置示例"
+homepage = "https://example.com/example-cli"
+license = "MIT"
+help = true
 version = "0.0.1"
 authors = ["Your Name <your_name@mail.com>"]
 
 shebang = "#!/usr/bin/env zsh"
 permission = "0755"
 
+# 额外引入的库文件，可以是预置库，也可以是自定义库
+libs = [
+    { type = "crompt", path = "log.sh" },
+    { type = "file", path = "./libs/mylib.sh" },
+]
+
+# 运行该脚本所需的外部依赖，类型可以是命令或者环境变量
+requires = [
+    { type = "command", name = "jq" },
+    { type = "command", name = "curl" },
+    { type = "env", name = "EXAMPLE_API_KEY" },
+]
 
 # 主命令 - greet
 [[commands]]
 name = "greet"
 about = "向用户打招呼"
-
-# greet 命令的参数定义
+aliases = ["hello"]
+hidden = false
+deprecated = false
+# greet 命令的参数定义 - 使用内联表数组格式
 args = [
-    {name = "name", short = "n", long = "name", help = "要打招呼的人的名字", required = true, takes_value = true},
-    {name = "times", short = "t", long = "times", help = "重复打招呼的次数", required = false, takes_value = true, default = "1"},
-    {name = "loud", short = "l", long = "loud", help = "使用大写字母", required = false, takes_value = false}
+    { name = "name", short = "n", long = "name", help = "要打招呼的人的名字", required = true, takes_value = true },
+    { name = "times", short = "t", long = "times", help = "重复打招呼的次数", required = false, takes_value = true, default = "1" },
+    { name = "loud", short = "l", long = "loud", help = "使用大写字母", required = false, takes_value = false },
 ]
 
 # greet 命令的子命令 - morning
@@ -23,7 +41,7 @@ args = [
 name = "morning"
 about = "早上好的特殊问候"
 args = [
-    {name = "name", short = "n", long = "name", help = "要打招呼的人的名字", required = true, takes_value = true}
+    { name = "name", short = "n", long = "name", help = "要打招呼的人的名字", required = true, takes_value = true },
 ]
 
 # 另一个主命令 - config
@@ -35,13 +53,13 @@ about = "配置管理"
 name = "set"
 about = "设置配置项"
 args = [
-    {name = "key", help = "配置项的键", required = true, takes_value = true, position = 0},
-    {name = "value", help = "配置项的值", required = true, takes_value = true, position = 1}
+    { name = "key", help = "配置项的键", required = true, takes_value = true, position = 0 },
+    { name = "value", help = "配置项的值", required = true, takes_value = true, position = 1 },
 ]
 
 [[commands.subcommands]]
 name = "get"
 about = "获取配置项"
 args = [
-    {name = "key", help = "配置项的键", required = true, takes_value = true, position = 0}
+    { name = "key", help = "配置项的键", required = true, takes_value = true, position = 0 },
 ]

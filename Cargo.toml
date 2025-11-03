@@ -1,7 +1,16 @@
 [package]
 name = "crompt"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+authors = ["BppleMan <bppleman@gmail.com>"]
+description = "Generate shell script argument parsers from TOML configuration, like clap for shell scripts"
+license = "Apache-2.0"
+repository = "https://github.com/BppleMan/crompt"
+homepage = "https://github.com/BppleMan/crompt"
+documentation = "https://docs.rs/crompt"
+readme = "README.md"
+keywords = ["shell", "cli", "parser", "script", "toml"]
+categories = ["command-line-utilities", "development-tools"]
 
 [dependencies]
 serde = { version = "1.0.228", features = ["derive"] }

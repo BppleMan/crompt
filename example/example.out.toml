@@ -1,0 +1,176 @@
+name = "git"
+description = "分布式版本控制系统的 Shell 包装示例"
+homepage = "https://git-scm.com/"
+license = "GPL-2.0-only"
+help = true
+version = "2.46.0"
+authors = [
+    "Linus Torvalds <torvalds@linux-foundation.org>",
+    "Junio C Hamano <gitster@pobox.com>",
+]
+
+shebang = "#!/usr/bin/env bash"
+permission = "0755"
+
+libs = [{ type = "crompt", path = "log.sh" }]
+
+requires = [
+    { type = "command", name = "git" },
+    { type = "command", name = "ssh" },
+    { type = "command", name = "less" },
+    { type = "env", name = "GIT_EDITOR" },
+]
+
+# clone 命令
+[[commands]]
+name = "clone"
+aliases = ["cl"]
+help = "Clone a repository into a new directory"
+args = [
+    { name = "repository", help = "仓库的 URL 或路径" },
+    { name = "directory", help = "可选的目标目录", required = false },
+    { name = "branch", short = "b", long = "branch", help = "克隆后检出指定分支", required = false },
+    { name = "depth", long = "depth", help = "使用指定深度创建浅克隆", required = false },
+    { name = "bare", long = "bare", help = "创建裸仓库", flag = true, required = false },
+]
+
+# status 命令
+[[commands]]
+name = "status"
+aliases = ["st"]
+help = "Show the working tree status"
+args = [
+    { name = "short", short = "s", long = "short", help = "以精简格式显示", flag = true, required = false },
+    { name = "branch", short = "b", long = "branch", help = "显示当前分支信息", flag = true, required = false },
+    { name = "show-stash", long = "show-stash", help = "包含暂存区概览", flag = true, required = false },
+]
+
+# commit 命令
+[[commands]]
+name = "commit"
+aliases = ["ci"]
+help = "Record changes to the repository"
+args = [
+    { name = "message", short = "m", long = "message", help = "直接使用给定的提交信息", required = false },
+    { name = "all", short = "a", long = "all", help = "在提交前自动暂存已跟踪文件", flag = true, required = false },
+    { name = "amend", long = "amend", help = "修改上一次提交", flag = true, required = false },
+    { name = "gpg-sign", long = "gpg-sign", help = "使用 GPG 对提交进行签名", required = false },
+    { name = "allow-empty", long = "allow-empty", help = "允许创建空提交", flag = true, required = false },
+]
+
+# branch 命令
+[[commands]]
+name = "branch"
+aliases = ["br"]
+help = "List, create, or delete branches"
+args = [
+    { name = "all", long = "all", help = "同时列出远程和本地分支", flag = true, required = false },
+    { name = "verbose", short = "v", long = "verbose", help = "显示提交哈希和跟踪信息", flag = true, required = false },
+]
+
+[[commands.subcommands]]
+name = "list"
+aliases = ["ls"]
+help = "List branches with optional filters"
+args = [
+    { name = "remote", long = "remote", help = "仅列出远程分支", flag = true, required = false },
+    { name = "contains", long = "contains", help = "仅列出包含指定提交的分支", required = false },
+]
+
+[[commands.subcommands]]
+name = "delete"
+aliases = ["del"]
+help = "Delete a branch"
+args = [
+    { name = "branch", help = "要删除的分支名称" },
+    { name = "force", short = "f", long = "force", help = "忽略合并检查强制删除", flag = true, required = false },
+]
+
+[[commands.subcommands]]
+name = "rename"
+aliases = ["mv"]
+help = "Rename a branch"
+args = [{ name = "old", help = "当前分支名称" }, { name = "new", help = "新的分支名称" }]
+
+# remote 命令
+[[commands]]
+name = "remote"
+aliases = ["rt"]
+help = "Manage tracked repositories"
+
+[[commands.subcommands]]
+name = "add"
+aliases = ["a"]
+help = "Add a new remote"
+args = [
+    { name = "name", help = "远程名称" },
+    { name = "url", help = "远程仓库地址" },
+    { name = "fetch", long = "fetch", help = "添加后立即抓取", flag = true, required = false },
+]
+
+[[commands.subcommands]]
+name = "remove"
+aliases = ["rm"]
+help = "Remove a remote"
+args = [{ name = "name", help = "要移除的远程名称" }]
+
+[[commands.subcommands]]
+name = "set-url"
+aliases = ["seturl"]
+help = "Change remote URL"
+args = [
+    { name = "name", help = "需要更新的远程名称" },
+    { name = "new-url", help = "新的远程仓库地址" },
+]
+
+# log 命令
+[[commands]]
+name = "log"
+aliases = ["lg"]
+help = "Show commit history"
+args = [
+    { name = "stat", long = "stat", help = "显示每个提交的 diffstat", flag = true, required = false },
+    { name = "decorate", long = "decorate", help = "在输出中显示引用名称", flag = true, required = false },
+    { name = "max-count", short = "n", long = "max-count", help = "限制展示的提交数量", required = false, default = "10" },
+    { name = "author", long = "author", help = "只显示匹配作者的提交", required = false },
+    { name = "grep", long = "grep", help = "只显示匹配消息的提交", required = false, multiple = true },
+    { name = "date", long = "date", help = "控制日期字段的显示格式", required = false, allowed = [
+        "default",
+        "relative",
+        "unix",
+        "iso8601",
+        "rfc2822",
+    ] },
+]
+
+# tag 命令
+[[commands]]
+name = "tag"
+aliases = ["tg"]
+help = "Create, list, and delete tags"
+args = [
+    { name = "annotate", short = "a", long = "annotate", help = "创建附注标签", flag = true, required = false },
+    { name = "sign", short = "s", long = "sign", help = "使用 GPG 对标签签名", flag = true, required = false },
+    { name = "message", short = "m", long = "message", help = "指定标签附注内容", required = false },
+]
+
+[[commands.subcommands]]
+name = "list"
+aliases = ["ls"]
+help = "List all tags"
+args = [{ name = "pattern", help = "可选的标签过滤模式", required = false }]
+
+[[commands.subcommands]]
+name = "delete"
+aliases = ["del"]
+help = "Delete a tag"
+args = [{ name = "name", help = "要删除的标签名称" }]
+
+[[commands.subcommands]]
+name = "create"
+aliases = ["new"]
+help = "Create a tag pointing to the current commit"
+args = [
+    { name = "name", help = "要创建的标签名称" },
+    { name = "commit", help = "可选的目标提交", required = false },
+]
